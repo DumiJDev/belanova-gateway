@@ -1,0 +1,448 @@
+/* monitoring.css */
+
+.monitoring-view {
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+}
+
+/* Overview Board */
+.overview-board {
+    padding: 1rem 2rem;
+    gap: 1.5rem;
+}
+
+/* Health Score Card */
+.health-score-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border: 1px solid var(--success);
+}
+
+.health-score {
+    color: var(--success);
+    font-size: 3rem;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.health-progress-bar {
+    --lumo-primary-color: var(--success);
+    height: 0.75rem;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+}
+
+.health-icon {
+    color: var(--success);
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.1); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.1); }
+    70% { transform: scale(1); }
+}
+
+/* Metric Card Icons */
+.routes-icon {
+    color: var(--accent-primary);
+}
+
+.timer-icon {
+    color: var(--warning);
+}
+
+.error-icon {
+    color: var(--error);
+}
+
+/* Chart Cards */
+.chart-card {
+    min-height: 18rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.response-time-chart {
+    grid-column: span 1;
+}
+
+.throughput-chart {
+    grid-column: span 1;
+}
+
+/* Chart Simulation Styles */
+.chart-simulation {
+    gap: 0.75rem;
+    padding: 1rem 0;
+}
+
+.chart-data-point {
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.chart-data-point:last-child {
+    border-bottom: none;
+}
+
+.chart-time {
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    min-width: 3rem;
+}
+
+.response-bar {
+    flex: 1;
+    --lumo-primary-color: var(--accent-primary);
+    height: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.chart-value {
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    min-width: 4rem;
+    text-align: right;
+}
+
+/* Throughput Metrics */
+.throughput-area {
+    padding: 1rem;
+}
+
+.throughput-metrics {
+    gap: 1rem;
+}
+
+.metric-row {
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.metric-row:hover {
+    background: var(--bg-tertiary);
+}
+
+.metric-row.current {
+    border-left: 3px solid var(--accent-primary);
+    font-weight: 600;
+}
+
+.metric-row.peak {
+    border-left: 3px solid var(--error);
+}
+
+.metric-row.average {
+    border-left: 3px solid var(--warning);
+}
+
+.sparkline-container {
+    margin-top: 1rem;
+    padding: 2rem;
+    background: var(--bg-tertiary);
+    border-radius: 0.75rem;
+    text-align: center;
+    color: var(--text-tertiary);
+    border: 2px dashed var(--border-color);
+}
+
+/* Metrics Section */
+.metrics-section {
+    margin: 0 2rem 2rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.metrics-grid vaadin-grid-cell-content {
+    padding: 1rem 0.75rem;
+}
+
+/* Status Indicators */
+.status-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.status-icon.status-healthy {
+    color: var(--success);
+}
+
+.status-icon.status-warning {
+    color: var(--warning);
+}
+
+.status-icon.status-error {
+    color: var(--error);
+}
+
+.status-icon.status-unknown {
+    color: var(--text-tertiary);
+}
+
+.status-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Response Time Indicators */
+.response-time-value {
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.time-excellent {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.time-good {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+}
+
+.time-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.time-poor {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+/* Success Rate Indicators */
+.success-rate-bar {
+    height: 0.375rem;
+    border-radius: 0.1875rem;
+    margin-top: 0.25rem;
+}
+
+.rate-excellent {
+    --lumo-primary-color: var(--success);
+}
+
+.rate-good {
+    --lumo-primary-color: var(--accent-primary);
+}
+
+.rate-warning {
+    --lumo-primary-color: var(--warning);
+}
+
+.rate-poor {
+    --lumo-primary-color: var(--error);
+}
+
+/* Uptime Indicators */
+.uptime-indicator {
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.uptime-excellent {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.uptime-good {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+}
+
+.uptime-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.uptime-poor {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+/* Action Buttons */
+.check-btn:hover {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.details-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+}
+
+/* Control Elements */
+.time-range-select {
+    min-width: 150px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.auto-refresh-btn {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .7;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .overview-board,
+    .metrics-section {
+        margin: 0 1rem;
+        padding: 1rem;
+    }
+
+    .response-time-chart,
+    .throughput-chart {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .view-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .chart-card {
+        min-height: 14rem;
+        padding: 1rem;
+    }
+
+    .chart-data-point {
+        gap: 0.5rem;
+    }
+
+    .chart-time {
+        min-width: 2.5rem;
+    }
+
+    .chart-value {
+        min-width: 3rem;
+    }
+
+    /* Hide some columns on mobile */
+    .metrics-grid vaadin-grid-column:nth-child(4),
+    .metrics-grid vaadin-grid-column:nth-child(5) {
+        display: none;
+    }
+}
+
+/* Loading and Empty States */
+.metrics-grid[loading] {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.empty-metrics {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.empty-metrics vaadin-icon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+}
+
+/* Real-time Data Animations */
+@keyframes dataUpdate {
+    0% { opacity: 0.5; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.metric-card.updating {
+    animation: dataUpdate 0.5s ease-out;
+}
+
+/* Performance Indicators */
+.performance-excellent {
+    border-left: 4px solid var(--success);
+}
+
+.performance-good {
+    border-left: 4px solid var(--accent-primary);
+}
+
+.performance-warning {
+    border-left: 4px solid var(--warning);
+}
+
+.performance-poor {
+    border-left: 4px solid var(--error);
+}
+
+/* Success rate container and text */
+.success-rate-container {
+    min-width: 120px;
+}
+
+.success-rate-text {
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+}

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Belanova Gateway Admin UI
+  threads:
+    virtual:
+      enabled: true
+
+vaadin:
+  launch-browser: true

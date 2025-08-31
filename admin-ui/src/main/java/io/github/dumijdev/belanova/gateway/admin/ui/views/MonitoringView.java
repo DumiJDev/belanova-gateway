@@ -1,545 +1,425 @@
-package io.github.dumijdev.belanova.gateway.admin.ui.views;
+package io.github.dumijdev.belanova.gateway.admin.views.monitoring;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Pre;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.github.dumijdev.belanova.gateway.admin.ui.layouts.MainLayout;
-import io.github.dumijdev.belanova.gateway.admin.ui.models.RouteMetrics;
+import io.github.dumijdev.belanova.gateway.admin.ui.models.BackendHealthStatus;
+import io.github.dumijdev.belanova.gateway.admin.ui.models.LogEntry;
+import io.github.dumijdev.belanova.gateway.admin.ui.models.MetricInfo;
 import io.github.dumijdev.belanova.gateway.admin.ui.services.MonitoringService;
-import io.github.dumijdev.belanova.gateway.admin.ui.services.TranslationService;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Route(value = "monitoring", layout = MainLayout.class)
 @PageTitle("Monitoring")
-@CssImport("./styles/monitoring.css")
+@Route(value = "monitoring", layout = MainLayout.class)
 public class MonitoringView extends VerticalLayout {
 
   private final MonitoringService monitoringService;
-  private final TranslationService translationService;
-  private final Grid<RouteMetrics> metricsGrid = new Grid<>(RouteMetrics.class, false);
+  private final Tabs tabSheet;
+  private final VerticalLayout contentArea;
 
-  public MonitoringView(MonitoringService monitoringService, TranslationService translationService) {
+  // Health Check Tab
+  private final Grid<BackendHealthStatus> healthGrid;
+
+  // Metrics Tab
+  private final Grid<MetricInfo> metricsGrid;
+
+  // Logs Tab
+  private final Grid<LogEntry> logsGrid;
+  private final TextField logSearchField;
+  private final Select<String> logLevelFilter;
+
+  public MonitoringView(MonitoringService monitoringService) {
     this.monitoringService = monitoringService;
-    this.translationService = translationService;
+    this.tabSheet = new Tabs();
+    this.contentArea = new VerticalLayout();
+    this.healthGrid = new Grid<>(BackendHealthStatus.class, false);
+    this.metricsGrid = new Grid<>(MetricInfo.class, false);
+    this.logsGrid = new Grid<>(LogEntry.class, false);
+    this.logSearchField = new TextField();
+    this.logLevelFilter = new Select<>();
 
     setSizeFull();
     setPadding(false);
-    setSpacing(false);
-    addClassName("monitoring-view");
 
-    add(createHeader());
-    add(createOverviewSection());
-    add(createMetricsSection());
+    configureTabs();
+    configureGrids();
 
-    loadData();
+    add(tabSheet, contentArea);
+
+    // Default to health check tab
+    showHealthCheck();
   }
 
-  private Component createHeader() {
-    HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("view-header");
-    header.setWidthFull();
-    header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    header.setAlignItems(FlexComponent.Alignment.CENTER);
+  private void configureTabs() {
+    Tab healthTab = new Tab(new Icon(VaadinIcon.HEART), new Span("Health Checks"));
+    Tab metricsTab = new Tab(new Icon(VaadinIcon.BAR_CHART), new Span("Metrics"));
+    Tab logsTab = new Tab(new Icon(VaadinIcon.FILE_TEXT), new Span("Logs"));
 
-    // Title section
-    VerticalLayout titleSection = new VerticalLayout();
-    titleSection.setSpacing(false);
-    titleSection.setPadding(false);
+    tabSheet.add(healthTab, metricsTab, logsTab);
 
-    H1 title = new H1(translationService.getTranslation("navigation.monitoring"));
-    title.addClassName("view-title");
-
-    Span subtitle = new Span("Real-time performance metrics and system health monitoring");
-    subtitle.addClassName("view-subtitle");
-
-    titleSection.add(title, subtitle);
-
-    // Control section
-    HorizontalLayout controls = new HorizontalLayout();
-    controls.setSpacing(true);
-
-    Select<String> timeRange = new Select<>();
-    timeRange.setItems("Last Hour", "Last 24 Hours", "Last 7 Days", "Last 30 Days");
-    timeRange.setValue("Last Hour");
-    timeRange.addClassName("time-range-select");
-
-    Button autoRefreshBtn = new Button("Auto Refresh");
-    autoRefreshBtn.setIcon(VaadinIcon.REFRESH.create());
-    autoRefreshBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-    autoRefreshBtn.addClassName("auto-refresh-btn");
-    autoRefreshBtn.addClickListener(e -> {
-      loadData();
-      Notification.show("Data refreshed");
+    tabSheet.addSelectedChangeListener(event -> {
+      Tab selectedTab = event.getSelectedTab();
+      if (selectedTab == healthTab) {
+        showHealthCheck();
+      } else if (selectedTab == metricsTab) {
+        showMetrics();
+      } else if (selectedTab == logsTab) {
+        showLogs();
+      }
     });
-
-    Button exportBtn = new Button("Export");
-    exportBtn.setIcon(VaadinIcon.DOWNLOAD.create());
-    exportBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-    exportBtn.addClassName("export-btn");
-
-    controls.add(timeRange, autoRefreshBtn, exportBtn);
-
-    header.add(titleSection, controls);
-    return header;
   }
 
-  private Component createOverviewSection() {
-    FormLayout grid = new FormLayout();
-    grid.addClassName("overview-grid");
-    grid.setResponsiveSteps(
-        new FormLayout.ResponsiveStep("0", 1),
-        new FormLayout.ResponsiveStep("600px", 2),
-        new FormLayout.ResponsiveStep("1024px", 4)
-    );
-
-    grid.add(
-        createHealthScoreCard(),
-        createTotalRoutesCard(),
-        createAvgResponseTimeCard(),
-        createErrorRateCard(),
-        createResponseTimeChart(),
-        createThroughputChart()
-    );
-
-    return grid;
+  private void configureGrids() {
+    configureHealthGrid();
+    configureMetricsGrid();
+    configureLogsGrid();
   }
 
-  private Component createHealthScoreCard() {
-    Div card = new Div();
-    card.addClassName("metric-card health-score-card");
+  private void configureHealthGrid() {
+    healthGrid.setSizeFull();
+    healthGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
-    HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("card-header");
-    header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+    healthGrid.addColumn(BackendHealthStatus::name)
+        .setHeader("Backend")
+        .setSortable(true)
+        .setFlexGrow(1);
 
-    H3 title = new H3("Overall Health Score");
-    title.addClassName("card-title");
-
-    Icon icon = VaadinIcon.HEART.create();
-    icon.addClassNames("card-icon", "health-icon");
-
-    header.add(title, icon);
-
-    VerticalLayout content = new VerticalLayout();
-    content.addClassName("card-content");
-    content.setSpacing(false);
-
-    Span score = new Span("92%");
-    score.addClassNames("main-metric" ,"health-score");
-
-    ProgressBar healthBar = new ProgressBar(0, 100, 92);
-    healthBar.addClassName("health-progress-bar");
-
-    Span details = new Span("Excellent system performance");
-    details.addClassNames("metric-details", "success");
-
-    content.add(score, healthBar, details);
-    card.add(header, content);
-
-    return card;
-  }
-
-  private Component createTotalRoutesCard() {
-    return createSimpleMetricCard(
-        "Active Routes",
-        "147",
-        "+12 since yesterday",
-        VaadinIcon.ROAD,
-        "routes-icon"
-    );
-  }
-
-  private Component createAvgResponseTimeCard() {
-    return createSimpleMetricCard(
-        "Avg Response Time",
-        "142ms",
-        "-23ms from yesterday",
-        VaadinIcon.TIMER,
-        "timer-icon"
-    );
-  }
-
-  private Component createErrorRateCard() {
-    return createSimpleMetricCard(
-        "Error Rate",
-        "0.3%",
-        "Within normal range",
-        VaadinIcon.EXCLAMATION_CIRCLE_O,
-        "error-icon"
-    );
-  }
-
-  private Component createSimpleMetricCard(String title, String value, String change,
-                                           VaadinIcon iconType, String iconClass) {
-    Div card = new Div();
-    card.addClassName("metric-card");
-
-    HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("card-header");
-    header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-
-    H3 cardTitle = new H3(title);
-    cardTitle.addClassName("card-title");
-
-    Icon icon = iconType.create();
-    icon.addClassName("card-icon " + iconClass);
-
-    header.add(cardTitle, icon);
-
-    VerticalLayout content = new VerticalLayout();
-    content.addClassName("card-content");
-    content.setSpacing(false);
-
-    Span mainValue = new Span(value);
-    mainValue.addClassName("main-metric");
-
-    Span changeText = new Span(change);
-    changeText.addClassName("metric-change");
-
-    content.add(mainValue, changeText);
-    card.add(header, content);
-
-    return card;
-  }
-
-  private Component createResponseTimeChart() {
-    Div card = new Div();
-    card.addClassNames("chart-card", "response-time-chart");
-
-    HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("card-header");
-    header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-
-    H2 title = new H2("Response Time Trends");
-    title.addClassName("card-title");
-
-    HorizontalLayout chartControls = new HorizontalLayout();
-    Button realTimeBtn = new Button("Real-time");
-    realTimeBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY);
-
-    Button averageBtn = new Button("Average");
-    averageBtn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_TERTIARY);
-
-    Button p95Btn = new Button("95th %");
-    p95Btn.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_TERTIARY);
-
-    chartControls.add(realTimeBtn, averageBtn, p95Btn);
-    chartControls.addClassName("chart-controls");
-
-    header.add(title, chartControls);
-
-    Div chartArea = new Div();
-    chartArea.addClassName("chart-area");
-
-    // Simulated chart data visualization
-    VerticalLayout chartContent = new VerticalLayout();
-    chartContent.addClassName("chart-simulation");
-    chartContent.setSpacing(false);
-
-    for (int i = 0; i < 8; i++) {
-      HorizontalLayout dataPoint = new HorizontalLayout();
-      dataPoint.addClassName("chart-data-point");
-
-      Span time = new Span(String.format("%02d:00", 14 + i));
-      time.addClassName("chart-time");
-
-      ProgressBar responseBar = new ProgressBar(0, 500, 100 + (i * 20) + (int)(Math.random() * 50));
-      responseBar.addClassName("response-bar");
-
-      Span value = new Span((100 + (i * 20) + (int)(Math.random() * 50)) + "ms");
-      value.addClassName("chart-value");
-
-      dataPoint.add(time, responseBar, value);
-      chartContent.add(dataPoint);
-    }
-
-    chartArea.add(chartContent);
-    card.add(header, chartArea);
-
-    return card;
-  }
-
-  private Component createThroughputChart() {
-    Div card = new Div();
-    card.addClassNames("chart-card", "throughput-chart");
-
-    HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("card-header");
-
-    H2 title = new H2("Request Throughput");
-    title.addClassName("card-title");
-
-    header.add(title);
-
-    Div chartArea = new Div();
-    chartArea.addClassNames("chart-area", "throughput-area");
-
-    // Simulated throughput metrics
-    VerticalLayout throughputMetrics = new VerticalLayout();
-    throughputMetrics.addClassName("throughput-metrics");
-    throughputMetrics.setSpacing(false);
-
-    HorizontalLayout currentRps = new HorizontalLayout();
-    currentRps.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    currentRps.setWidthFull();
-    currentRps.add(new Span("Current RPS:"), new Span("1,247"));
-    currentRps.addClassNames("metric-row", "current");
-
-    HorizontalLayout peakRps = new HorizontalLayout();
-    peakRps.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    peakRps.setWidthFull();
-    peakRps.add(new Span("Peak RPS:"), new Span("2,891"));
-    peakRps.addClassNames("metric-row", "peak");
-
-    HorizontalLayout avgRps = new HorizontalLayout();
-    avgRps.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    avgRps.setWidthFull();
-    avgRps.add(new Span("Average RPS:"), new Span("1,456"));
-    avgRps.addClassNames("metric-row", "average");
-
-    // Mini sparkline representation
-    Div sparkline = new Div();
-    sparkline.addClassName("sparkline-container");
-    sparkline.add(new Span("📊 Real-time throughput visualization"));
-
-    throughputMetrics.add(currentRps, peakRps, avgRps, sparkline);
-    chartArea.add(throughputMetrics);
-    card.add(header, chartArea);
-
-    return card;
-  }
-
-  private Component createMetricsSection() {
-    VerticalLayout section = new VerticalLayout();
-    section.addClassName("metrics-section");
-    section.setPadding(false);
-
-    H2 sectionTitle = new H2("Route Performance Metrics");
-    sectionTitle.addClassName("section-title");
-
-    HorizontalLayout tableHeader = new HorizontalLayout();
-    tableHeader.addClassName("table-header");
-    tableHeader.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    tableHeader.setAlignItems(FlexComponent.Alignment.CENTER);
-
-    Button refreshTableBtn = new Button("Refresh Data");
-    refreshTableBtn.setIcon(VaadinIcon.REFRESH.create());
-    refreshTableBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-    refreshTableBtn.addClickListener(e -> loadData());
-
-    tableHeader.add(sectionTitle, refreshTableBtn);
-
-    Component grid = createMetricsGrid();
-
-    section.add(tableHeader, grid);
-    return section;
-  }
-
-  private Component createMetricsGrid() {
-    metricsGrid.addClassName("metrics-grid");
-    metricsGrid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
-
-    // Status column with visual indicator
-    metricsGrid.addComponentColumn(this::createStatusIndicator)
+    healthGrid.addColumn(new ComponentRenderer<>(this::createHealthStatusBadge))
         .setHeader("Status")
+        .setWidth("120px");
+
+    healthGrid.addColumn(health -> health.responseTime() + " ms")
+        .setHeader("Response Time")
+        .setSortable(true)
+        .setWidth("130px");
+
+    healthGrid.addColumn(BackendHealthStatus::healthyUpstreams)
+        .setHeader("Healthy/Total")
+        .setSortable(true)
+        .setWidth("120px");
+
+    healthGrid.addColumn(health ->
+            health.lastChecked().format(DateTimeFormatter.ofPattern("MMM dd, HH:mm:ss")))
+        .setHeader("Last Checked")
+        .setSortable(true)
+        .setFlexGrow(1);
+
+    healthGrid.addColumn(new ComponentRenderer<>(this::createHealthActions))
+        .setHeader("Actions")
         .setWidth("100px")
         .setFlexGrow(0);
 
-    // Route name
-    metricsGrid.addColumn(RouteMetrics::routeName)
-        .setHeader("Route")
+    healthGrid.setItemDetailsRenderer(new ComponentRenderer<>(this::createHealthDetails));
+  }
+
+  private void configureMetricsGrid() {
+    metricsGrid.setSizeFull();
+    metricsGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+
+    metricsGrid.addColumn(MetricInfo::name)
+        .setHeader("Metric Name")
         .setSortable(true)
-        .setWidth("200px");
+        .setFlexGrow(1);
 
-    // Response time with color coding
-    metricsGrid.addComponentColumn(this::createResponseTimeIndicator)
-        .setHeader("Response Time")
-        .setWidth("150px")
-        .setFlexGrow(0);
+    metricsGrid.addColumn(MetricInfo::value)
+        .setHeader("Current Value")
+        .setSortable(true)
+        .setWidth("150px");
 
-    // Success rate with progress bar
-    metricsGrid.addComponentColumn(this::createSuccessRateIndicator)
-        .setHeader("Success Rate")
-        .setWidth("150px")
-        .setFlexGrow(0);
+    metricsGrid.addColumn(MetricInfo::getUnit)
+        .setHeader("Unit")
+        .setWidth("80px");
 
-    // Last check time
-    metricsGrid.addColumn(metrics -> metrics.lastCheck() != null ?
-            metrics.lastCheck().format(DateTimeFormatter.ofPattern("HH:mm:ss")) : "Never")
-        .setHeader("Last Check")
-        .setWidth("120px")
-        .setFlexGrow(0);
+    metricsGrid.addColumn(MetricInfo::description)
+        .setHeader("Description")
+        .setFlexGrow(2);
 
-    // Uptime percentage
-    metricsGrid.addComponentColumn(this::createUptimeIndicator)
-        .setHeader("Uptime")
-        .setWidth("120px")
-        .setFlexGrow(0);
-
-    // Actions
-    metricsGrid.addComponentColumn(this::createActionsColumn)
-        .setHeader("Actions")
-        .setWidth("150px")
-        .setFlexGrow(0);
-
-    return metricsGrid;
+    metricsGrid.addColumn(metric ->
+            metric.lastUpdated().format(DateTimeFormatter.ofPattern("HH:mm:ss")))
+        .setHeader("Last Updated")
+        .setWidth("100px");
   }
 
-  private Component createStatusIndicator(RouteMetrics metrics) {
-    HorizontalLayout status = new HorizontalLayout();
-    status.setAlignItems(FlexComponent.Alignment.CENTER);
-    status.setSpacing(false);
-    status.addClassName("status-indicator");
+  private void configureLogsGrid() {
+    logsGrid.setSizeFull();
+    logsGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
-    Icon statusIcon;
-    String statusClass;
+    logsGrid.addColumn(log ->
+            log.timestamp().format(DateTimeFormatter.ofPattern("MMM dd HH:mm:ss")))
+        .setHeader("Timestamp")
+        .setSortable(true)
+        .setWidth("150px");
 
-    switch (metrics.status().toLowerCase()) {
-      case "healthy" -> {
-        statusIcon = VaadinIcon.CHECK_CIRCLE.create();
-        statusClass = "status-healthy";
+    logsGrid.addColumn(new ComponentRenderer<>(this::createLogLevelBadge))
+        .setHeader("Level")
+        .setWidth("80px");
+
+    logsGrid.addColumn(LogEntry::logger)
+        .setHeader("Logger")
+        .setFlexGrow(1);
+
+    logsGrid.addColumn(LogEntry::message)
+        .setHeader("Message")
+        .setFlexGrow(3);
+
+    logsGrid.setItemDetailsRenderer(new ComponentRenderer<>(this::createLogDetails));
+
+    // Configure log filters
+    logLevelFilter.setLabel("Log Level");
+    logLevelFilter.setItems("All", "ERROR", "WARN", "INFO", "DEBUG");
+    logLevelFilter.setValue("All");
+    logLevelFilter.addValueChangeListener(e -> updateLogs());
+
+    logSearchField.setPlaceholder("Search logs...");
+    logSearchField.setClearButtonVisible(true);
+    logSearchField.setValueChangeMode(com.vaadin.flow.data.value.ValueChangeMode.LAZY);
+    logSearchField.addValueChangeListener(e -> updateLogs());
+  }
+
+  private void showHealthCheck() {
+    contentArea.removeAll();
+
+    Button refreshButton = new Button("Refresh", new Icon(VaadinIcon.REFRESH));
+    refreshButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    refreshButton.addClickListener(e -> updateHealthStatus());
+
+    HorizontalLayout toolbar = new HorizontalLayout(refreshButton);
+    toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+    contentArea.add(toolbar, healthGrid);
+    updateHealthStatus();
+  }
+
+  private void showMetrics() {
+    contentArea.removeAll();
+
+    Button refreshButton = new Button("Refresh", new Icon(VaadinIcon.REFRESH));
+    refreshButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    refreshButton.addClickListener(e -> updateMetrics());
+
+    HorizontalLayout toolbar = new HorizontalLayout(refreshButton);
+    toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+    contentArea.add(toolbar, metricsGrid);
+    updateMetrics();
+  }
+
+  private void showLogs() {
+    contentArea.removeAll();
+
+    Button refreshButton = new Button("Refresh", new Icon(VaadinIcon.REFRESH));
+    refreshButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+    Button clearButton = new Button("Clear", new Icon(VaadinIcon.TRASH));
+    clearButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+    clearButton.addClickListener(e -> clearLogs());
+
+    HorizontalLayout toolbar = new HorizontalLayout(logLevelFilter, logSearchField, refreshButton, clearButton);
+    toolbar.setAlignItems(FlexComponent.Alignment.END);
+
+    contentArea.add(toolbar, logsGrid);
+    updateLogs();
+  }
+
+  private Component createHealthStatusBadge(BackendHealthStatus health) {
+    Span badge = new Span(health.getStatus());
+    badge.getElement().getThemeList().add("badge");
+
+    switch (health.getStatus().toLowerCase()) {
+      case "healthy":
+        badge.getElement().getThemeList().add("success");
+        break;
+      case "unhealthy":
+        badge.getElement().getThemeList().add("error");
+        break;
+      case "warning":
+        badge.getElement().getThemeList().add("warning");
+        break;
+      default:
+        badge.getElement().getThemeList().add("contrast");
+    }
+
+    return badge;
+  }
+
+  private Component createHealthActions(BackendHealthStatus health) {
+    Button checkButton = new Button(new Icon(VaadinIcon.PLAY));
+    checkButton.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_TERTIARY);
+    checkButton.setTooltipText("Force Health Check");
+    checkButton.addClickListener(e -> forceHealthCheck(health.getBackendId()));
+
+    return checkButton;
+  }
+
+  private Component createHealthDetails(BackendHealthStatus health) {
+    VerticalLayout details = new VerticalLayout();
+    details.setPadding(true);
+    details.addClassNames(LumoUtility.Background.CONTRAST_5);
+
+    private Component createHealthDetails (BackendHealthStatus health){
+      VerticalLayout details = new VerticalLayout();
+      details.setPadding(true);
+      details.addClassNames(LumoUtility.Background.CONTRAST_5);
+
+      if (health.getErrorMessage() != null && !health.getErrorMessage().isEmpty()) {
+        H4 errorTitle = new H4("Error Details");
+        Pre errorPre = new Pre(health.getErrorMessage());
+        errorPre.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.ERROR);
+        details.add(errorTitle, errorPre);
       }
-      case "degraded" -> {
-        statusIcon = VaadinIcon.WARNING.create();
-        statusClass = "status-warning";
+
+      // Health check configuration
+      H4 configTitle = new H4("Health Check Configuration");
+      Span healthPath = new Span("Health Path: " + (health.getHealthPath() != null ? health.getHealthPath() : "N/A"));
+      Span interval = new Span("Check Interval: " + health.getCheckInterval() + "s");
+      Span timeout = new Span("Timeout: " + health.getTimeout() + "s");
+
+      VerticalLayout configLayout = new VerticalLayout(healthPath, interval, timeout);
+      configLayout.setPadding(false);
+      configLayout.setSpacing(false);
+
+      details.add(configTitle, configLayout);
+      return details;
+    }
+
+    private Component createLogLevelBadge (LogEntry log){
+      Span badge = new Span(log.getLevel());
+      badge.getElement().getThemeList().add("badge");
+
+      switch (log.getLevel().toUpperCase()) {
+        case "ERROR":
+          badge.getElement().getThemeList().add("error");
+          break;
+        case "WARN":
+          badge.getElement().getThemeList().add("warning");
+          break;
+        case "INFO":
+          badge.getElement().getThemeList().add("success");
+          break;
+        case "DEBUG":
+          badge.getElement().getThemeList().add("contrast");
+          break;
+        default:
+          badge.getElement().getThemeList().add("primary");
       }
-      case "down" -> {
-        statusIcon = VaadinIcon.CLOSE_CIRCLE.create();
-        statusClass = "status-error";
+
+      return badge;
+    }
+
+    private Component createLogDetails (LogEntry log){
+      VerticalLayout details = new VerticalLayout();
+      details.setPadding(true);
+      details.addClassNames(LumoUtility.Background.CONTRAST_5);
+
+      if (log.getStackTrace() != null && !log.getStackTrace().isEmpty()) {
+        H4 stackTitle = new H4("Stack Trace");
+        Pre stackPre = new Pre(log.getStackTrace());
+        stackPre.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.FontFamily.MONOSPACE);
+        stackPre.getStyle().set("max-height", "300px");
+        stackPre.getStyle().set("overflow", "auto");
+        details.add(stackTitle, stackPre);
       }
-      default -> {
-        statusIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        statusClass = "status-unknown";
+
+      if (log.getRequestId() != null) {
+        Span requestIdSpan = new Span("Request ID: " + log.getRequestId());
+        requestIdSpan.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.FontFamily.MONOSPACE);
+        details.add(requestIdSpan);
+      }
+
+      return details;
+    }
+
+    private void updateHealthStatus () {
+      try {
+        List<BackendHealthStatus> healthStatuses = monitoringService.getBackendHealthStatuses();
+        healthGrid.setItems(healthStatuses);
+      } catch (Exception e) {
+        showNotification("Error loading health status: " + e.getMessage(), NotificationVariant.LUMO_ERROR);
       }
     }
 
-    statusIcon.addClassNames("status-icon ", statusClass);
-
-    Span statusText = new Span(metrics.status());
-    statusText.addClassName("status-text");
-
-    status.add(statusIcon, statusText);
-    return status;
-  }
-
-  private Component createResponseTimeIndicator(RouteMetrics metrics) {
-    HorizontalLayout indicator = new HorizontalLayout();
-    indicator.setAlignItems(FlexComponent.Alignment.CENTER);
-    indicator.addClassName("response-time-indicator");
-
-    Span timeValue = new Span(metrics.responseTime() + "ms");
-    timeValue.addClassName("response-time-value");
-
-    // Color code based on response time
-    String timeClass = switch (metrics.responseTime()) {
-      case Integer i when i < 100 -> "time-excellent";
-      case Integer i when i < 300 -> "time-good";
-      case Integer i when i < 500 -> "time-warning";
-      default -> "time-poor";
-    };
-
-    timeValue.addClassName(timeClass);
-    indicator.add(timeValue);
-
-    return indicator;
-  }
-
-  private Component createSuccessRateIndicator(RouteMetrics metrics) {
-    VerticalLayout container = new VerticalLayout();
-    container.setSpacing(false);
-    container.setPadding(false);
-    container.addClassName("success-rate-container");
-
-    HorizontalLayout header = new HorizontalLayout();
-    header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-    header.setWidthFull();
-
-    Span rateText = new Span(String.format("%.1f%%", metrics.successRate()));
-    rateText.addClassName("success-rate-text");
-
-    header.add(rateText);
-
-    ProgressBar rateBar = new ProgressBar(0, 100, metrics.successRate());
-    rateBar.addClassName("success-rate-bar");
-
-    // Color coding for success rate
-    if (metrics.successRate() >= 99.0) {
-      rateBar.addClassName("rate-excellent");
-    } else if (metrics.successRate() >= 95.0) {
-      rateBar.addClassName("rate-good");
-    } else if (metrics.successRate() >= 90.0) {
-      rateBar.addClassName("rate-warning");
-    } else {
-      rateBar.addClassName("rate-poor");
+    private void updateMetrics () {
+      try {
+        List<MetricInfo> metrics = monitoringService.getSystemMetrics();
+        metricsGrid.setItems(metrics);
+      } catch (Exception e) {
+        showNotification("Error loading metrics: " + e.getMessage(), NotificationVariant.LUMO_ERROR);
+      }
     }
 
-    container.add(header, rateBar);
-    return container;
-  }
+    private void updateLogs () {
+      try {
+        String searchTerm = logSearchField.getValue();
+        String logLevel = logLevelFilter.getValue();
 
-  private Component createUptimeIndicator(RouteMetrics metrics) {
-    Span uptime = new Span(String.format("%.2f%%", metrics.uptime()));
-    uptime.addClassName("uptime-indicator");
+        List<LogEntry> logs = monitoringService.getLogEntries();
 
-    // Color coding for uptime
-    if (metrics.uptime() >= 99.9) {
-      uptime.addClassName("uptime-excellent");
-    } else if (metrics.uptime() >= 99.0) {
-      uptime.addClassName("uptime-good");
-    } else if (metrics.uptime() >= 95.0) {
-      uptime.addClassName("uptime-warning");
-    } else {
-      uptime.addClassName("uptime-poor");
+        // Apply filters
+        if (logLevel != null && !"All".equals(logLevel)) {
+          logs = logs.stream()
+              .filter(log -> logLevel.equalsIgnoreCase(log.getLevel()))
+              .collect(Collectors.toList());
+        }
+
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+          logs = logs.stream()
+              .filter(log -> log.getMessage().toLowerCase().contains(searchTerm.toLowerCase()) ||
+                  log.getLogger().toLowerCase().contains(searchTerm.toLowerCase()))
+              .collect(Collectors.toList());
+        }
+
+        logsGrid.setItems(logs);
+      } catch (Exception e) {
+        showNotification("Error loading logs: " + e.getMessage(), NotificationVariant.LUMO_ERROR);
+      }
     }
 
-    return uptime;
+    private void forceHealthCheck (String backendId){
+      try {
+        monitoringService.forceHealthCheck(backendId);
+        updateHealthStatus();
+        showNotification("Health check triggered for backend", NotificationVariant.LUMO_SUCCESS);
+      } catch (Exception e) {
+        showNotification("Error triggering health check: " + e.getMessage(), NotificationVariant.LUMO_ERROR);
+      }
+    }
+
+    private void clearLogs () {
+      try {
+        monitoringService.clearLogs();
+        updateLogs();
+        showNotification("Logs cleared successfully", NotificationVariant.LUMO_SUCCESS);
+      } catch (Exception e) {
+        showNotification("Error clearing logs: " + e.getMessage(), NotificationVariant.LUMO_ERROR);
+      }
+    }
+
+    private void showNotification (String message, NotificationVariant variant){
+      Notification notification = Notification.show(message, 3000, Notification.Position.TOP_END);
+      notification.addThemeVariants(variant);
+    }
   }
-
-  private Component createActionsColumn(RouteMetrics metrics) {
-    HorizontalLayout actions = new HorizontalLayout();
-    actions.setSpacing(false);
-    actions.addClassName("actions-column");
-
-    Button checkBtn = new Button(VaadinIcon.PLAY.create());
-    checkBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SMALL);
-    checkBtn.addClassNames("action-btn", "check-btn");
-    checkBtn.setTooltipText("Run health check");
-    checkBtn.addClickListener(e -> {
-      monitoringService.check(metrics.routeId());
-      Notification.show("Health check initiated for " + metrics.routeName());
-      loadData();
-    });
-
-    Button detailsBtn = new Button(VaadinIcon.EYE.create());
-    detailsBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SMALL);
-    detailsBtn.addClassNames("action-btn", "details-btn");
-    detailsBtn.setTooltipText("View details");
-
-    actions.add(checkBtn, detailsBtn);
-    return actions;
-  }
-
-  private void loadData() {
-    metricsGrid.setItems(monitoringService.fetchMetrics());
-  }
-}

@@ -1,0 +1,4 @@
+package io.github.dumijdev.belanova.gateway.admin.ui.models;
+
+public record LogEntry() {
+}

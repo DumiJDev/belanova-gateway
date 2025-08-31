@@ -16,10 +16,6 @@ import java.util.Objects;
 public class Service {
   @Id
   private String id;
-
-  public String getId() {
-    return id;
-  }
   private String name;
   private String path;
 

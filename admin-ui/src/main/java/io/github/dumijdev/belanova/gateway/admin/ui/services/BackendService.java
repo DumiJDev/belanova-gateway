@@ -18,4 +18,18 @@ public class BackendService {
     public void delete(String id) {
         backends.removeIf(b -> b.getId().equals(id));
     }
+
+    public Backend findByNameContaining(String searchTerm) {
+        return findAll().stream()
+            .filter(backend -> searchTerm.equals(backend.getName()))
+            .findAny()
+            .orElse(null);
+    }
+
+    public Backend findById(String backendId) {
+        return findAll()
+            .stream()
+            .filter(backend -> backendId.equals(backend.getId()))
+            .findFirst().orElse( null);
+    }
 }

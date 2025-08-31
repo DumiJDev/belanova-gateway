@@ -1,0 +1,341 @@
+/* settings.css */
+
+.settings-view {
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+}
+
+/* TabSheet Styles */
+.settings-tabsheet {
+    margin: 0 2rem 2rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.settings-tabsheet vaadin-tabsheet-tab {
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.settings-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-tab vaadin-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--text-secondary);
+}
+
+.settings-tabsheet vaadin-tabsheet-tab[selected] .settings-tab vaadin-icon {
+    color: var(--accent-primary);
+}
+
+/* Tab Content */
+.tab-content {
+    padding: 2rem;
+    gap: 2rem;
+    background: var(--bg-primary);
+}
+
+/* Settings Sections */
+.settings-section {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    padding: 0;
+    overflow: hidden;
+}
+
+.settings-section:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.section-header {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.section-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+}
+
+.form-wrapper {
+    padding: 1.5rem;
+}
+
+/* Form Styles */
+.settings-form {
+    gap: 1.5rem;
+}
+
+.settings-form vaadin-text-field,
+.settings-form vaadin-password-field,
+.settings-form vaadin-integer-field,
+.settings-form vaadin-select,
+.settings-form vaadin-text-area {
+    width: 100%;
+}
+
+.settings-form vaadin-text-field input,
+.settings-form vaadin-password-field input,
+.settings-form vaadin-integer-field input,
+.settings-form vaadin-text-area textarea {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.settings-form vaadin-text-field:focus-within,
+.settings-form vaadin-password-field:focus-within,
+.settings-form vaadin-integer-field:focus-within,
+.settings-form vaadin-text-area:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Helper text styling */
+.settings-form [slot="helper"] {
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+}
+
+/* Checkbox styling */
+.settings-form vaadin-checkbox {
+    margin: 0.5rem 0;
+}
+
+.settings-form vaadin-checkbox::part(checkbox) {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.25rem;
+}
+
+.settings-form vaadin-checkbox[checked]::part(checkbox) {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Select styling */
+.settings-form vaadin-select {
+    background: var(--bg-secondary);
+}
+
+.settings-form vaadin-select::part(toggle-button) {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+/* Button styling within forms */
+.settings-form vaadin-button {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.settings-form vaadin-button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Import/Export Form */
+.import-export-form {
+    gap: 2rem;
+}
+
+.action-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    gap: 2rem;
+    transition: all 0.2s ease;
+}
+
+.action-section:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+.action-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.action-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.export-btn {
+    min-width: 150px;
+    height: 2.75rem;
+}
+
+.import-upload {
+    min-width: 200px;
+}
+
+.import-upload vaadin-upload-file-list {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .settings-tabsheet {
+        margin: 0 1rem 2rem;
+    }
+
+    .tab-content {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .view-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .settings-tabsheet {
+        margin: 0 0.5rem 2rem;
+    }
+
+    .tab-content {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .section-header,
+    .form-wrapper {
+        padding: 1rem;
+    }
+
+    .settings-form {
+        gap: 1rem;
+    }
+
+    .action-section {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .export-btn {
+        width: 100%;
+    }
+}
+
+/* Animation for form validation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.settings-form vaadin-text-field[invalid],
+.settings-form vaadin-password-field[invalid],
+.settings-form vaadin-integer-field[invalid] {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Test connection buttons */
+.settings-form vaadin-button[theme~="tertiary"] {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.settings-form vaadin-button[theme~="tertiary"]:hover {
+    background: var(--accent-light);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Success/Error states for test buttons */
+.test-success {
+    color: var(--success) !important;
+    border-color: var(--success) !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+}
+
+.test-error {
+    color: var(--error) !important;
+    border-color: var(--error) !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Loading state for forms */
+.settings-section[loading] {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.settings-section[loading]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(1px);
+}
+
+/* Dark mode specific adjustments */
+[theme="dark"] .settings-tabsheet vaadin-tabsheet-tab {
+    border-color: var(--border-color);
+}
+
+[theme="dark"] .settings-form vaadin-text-field input,
+[theme="dark"] .settings-form vaadin-password-field input,
+[theme="dark"] .settings-form vaadin-integer-field input,
+[theme="dark"] .settings-form vaadin-text-area textarea {
+    color: var(--text-primary);
+}
+
+[theme="dark"] .import-upload vaadin-upload-drop-label {
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 2px dashed var(--border-color);
+}
+
+/* Smooth transitions for theme switching */
+.settings-view *,
+.settings-tabsheet *,
+.settings-section *,
+.settings-form * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

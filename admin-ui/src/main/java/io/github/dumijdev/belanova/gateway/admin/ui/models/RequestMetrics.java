@@ -1,7 +1,11 @@
 package io.github.dumijdev.belanova.gateway.admin.ui.models;
 
+import java.time.LocalDateTime;
+
 public record RequestMetrics(
-    long requestCount,
-    double averageResponseTime
+    LocalDateTime timestamp,
+    int requestCount,
+    double averageResponseTime,
+    int errorCount
 ) {
 }

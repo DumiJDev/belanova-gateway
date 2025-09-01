@@ -3,6 +3,7 @@ package io.github.dumidev.belanova.gateway.gateway.loadbalancer;
 import io.github.dumijdev.belanova.gateway.common.model.Upstream;
 import io.github.dumijdev.belanova.gateway.common.model.UpstreamHealthStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component("roundRobinLoadBalancer")
+@Primary
 public class RoundRobinLoadBalancer implements LoadBalancer {
 
     private final AtomicInteger counter = new AtomicInteger(0);

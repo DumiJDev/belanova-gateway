@@ -24,7 +24,6 @@ import java.util.List;
 
 @PageTitle("Upstreams")
 @Route(value = "upstreams", layout = MainLayout.class)
-@CssImport("./styles/upstreams.css")
 public class UpstreamsView extends VerticalLayout {
     private final UpstreamService upstreamService;
     private final Grid<Upstream> grid = new Grid<>(Upstream.class, false);

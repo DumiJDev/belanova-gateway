@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belanova Sample Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        .method {
+            font-weight: bold;
+            color: #667eea;
+        }
+        .path {
+            font-family: monospace;
+            color: #333;
+        }
+        .response {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Belanova Sample Backend</h1>
+        <p>This is a sample backend service for testing the Belanova Gateway. It provides various endpoints to demonstrate routing, load balancing, and plugin functionality.</p>
+
+        <h2>Available Endpoints</h2>
+
+        <div class="endpoint">
+            <span class="method">GET</span> <span class="path">/api/users</span>
+            <div class="response">
+                {"message": "Users endpoint", "timestamp": "2024-01-01T00:00:00Z", "backend": "sample-backend"}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method">POST</span> <span class="path">/api/users</span>
+            <div class="response">
+                {"message": "User created", "id": 123, "timestamp": "2024-01-01T00:00:00Z"}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method">GET</span> <span class="path">/api/orders</span>
+            <div class="response">
+                {"message": "Orders endpoint", "count": 42, "timestamp": "2024-01-01T00:00:00Z"}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method">GET</span> <span class="path">/api/health</span>
+            <div class="response">
+                {"status": "UP", "timestamp": "2024-01-01T00:00:00Z", "service": "sample-backend"}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method">GET</span> <span class="path">/api/metrics</span>
+            <div class="response">
+                {"requests_total": 1337, "response_time_avg": 45.2, "timestamp": "2024-01-01T00:00:00Z"}
+            </div>
+        </div>
+
+        <h2>Testing Instructions</h2>
+        <ol>
+            <li>Access the gateway at <code>http://localhost:8080</code></li>
+            <li>Try the endpoints above with the <code>/api/</code> prefix</li>
+            <li>Check the admin UI at <code>http://localhost:8081</code></li>
+            <li>Monitor metrics at <code>http://localhost:9090</code></li>
+            <li>View dashboards at <code>http://localhost:3000</code></li>
+        </ol>
+
+        <h2>Rate Limiting Test</h2>
+        <p>Try making multiple requests quickly to test rate limiting:</p>
+        <pre><code>for i in {1..20}; do curl -s http://localhost:8080/api/users; done</code></pre>
+
+        <h2>JWT Authentication Test</h2>
+        <p>The gateway includes JWT authentication. Use the admin UI to configure and test authentication.</p>
+    </div>
+</body>
+</html>

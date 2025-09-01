@@ -29,10 +29,12 @@ public class DashboardServiceImpl implements DashboardService {
   @Override
   public BackendHealthStatus getBackendHealthStatus() {
     return new BackendHealthStatus(
-        "test",
+        "test-backend",
+        "Test Backend",
         "healthy",
-        "ok",
-        100.0,
+        100L,
+        2,
+        2,
         LocalDateTime.now()
     );
   }

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- Ignite configuration for Belanova Gateway -->
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+
+        <!-- Cluster name -->
+        <property name="igniteInstanceName" value="belanova-gateway-cluster"/>
+
+        <!-- Discovery SPI configuration -->
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                <value>ignite:47500..47509</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+                <property name="socketTimeout" value="5000"/>
+                <property name="ackTimeout" value="5000"/>
+                <property name="reconnectCount" value="3"/>
+                <property name="statisticsPrintFrequency" value="60000"/>
+                <property name="maxAckTimeout" value="600000"/>
+            </bean>
+        </property>
+
+        <!-- Communication SPI configuration -->
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="socketWriteTimeout" value="5000"/>
+                <property name="messageQueueLimit" value="1024"/>
+                <property name="socketReadTimeout" value="5000"/>
+                <property name="ackSendThreshold" value="16"/>
+                <property name="maxConnectTimeout" value="600000"/>
+            </bean>
+        </property>
+
+        <!-- Data storage configuration -->
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="name" value="default"/>
+                        <property name="initialSize" value="#{512 * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{2L * 1024 * 1024 * 1024}"/>
+                        <property name="pageSize" value="4096"/>
+                        <property name="persistenceEnabled" value="true"/>
+                        <property name="metricsEnabled" value="true"/>
+                    </bean>
+                </property>
+                <property name="storagePath" value="/opt/ignite/work/storage"/>
+                <property name="walPath" value="/opt/ignite/work/wal"/>
+                <property name="walArchivePath" value="/opt/ignite/work/wal/archive"/>
+            </bean>
+        </property>
+
+        <!-- Cache configuration -->
+        <property name="cacheConfiguration">
+            <list>
+                <!-- Backend cache -->
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="backend-cache"/>
+                    <property name="cacheMode" value="REPLICATED"/>
+                    <property name="atomicityMode" value="ATOMIC"/>
+                    <property name="backups" value="1"/>
+                    <property name="readFromBackup" value="true"/>
+                    <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+                    <property name="expiryPolicyFactory">
+                        <bean class="javax.cache.configuration.FactoryBuilder$SingletonFactory">
+                            <constructor-arg>
+                                <bean class="org.apache.ignite.cache.CacheExpiryPolicy">
+                                    <constructor-arg name="create" value="3600000"/>
+                                    <constructor-arg name="update" value="3600000"/>
+                                    <constructor-arg name="access" value="3600000"/>
+                                </bean>
+                            </constructor-arg>
+                        </bean>
+                    </property>
+                </bean>
+
+                <!-- Route cache -->
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="route-cache"/>
+                    <property name="cacheMode" value="REPLICATED"/>
+                    <property name="atomicityMode" value="ATOMIC"/>
+                    <property name="backups" value="1"/>
+                    <property name="readFromBackup" value="true"/>
+                    <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+                </bean>
+
+                <!-- Plugin cache -->
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="plugin-cache"/>
+                    <property name="cacheMode" value="REPLICATED"/>
+                    <property name="atomicityMode" value="ATOMIC"/>
+                    <property name="backups" value="1"/>
+                    <property name="readFromBackup" value="true"/>
+                    <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+                </bean>
+            </list>
+        </property>
+
+        <!-- Metrics configuration -->
+        <property name="metricsLogFrequency" value="60000"/>
+
+        <!-- Logger configuration -->
+        <property name="gridLogger">
+            <bean class="org.apache.ignite.logger.java.JavaLogger">
+                <property name="quiet" value="false"/>
+            </bean>
+        </property>
+
+        <!-- Work directory -->
+        <property name="workDirectory" value="/opt/ignite/work"/>
+
+        <!-- Enable client mode for gateway -->
+        <property name="clientMode" value="false"/>
+
+        <!-- Failure detection timeout -->
+        <property name="failureDetectionTimeout" value="30000"/>
+
+        <!-- System worker blocked timeout -->
+        <property name="systemWorkerBlockedTimeout" value="30000"/>
+
+    </bean>
+</beans>

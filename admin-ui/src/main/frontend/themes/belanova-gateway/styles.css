@@ -1,0 +1,1664 @@
+/* Kong-Inspired Theme Variables */
+:root {
+  /* Kong-inspired Color Palette */
+  --kong-primary: #667eea;
+  --kong-secondary: #764ba2;
+  --kong-accent: #f093fb;
+  --kong-success: #22c55e;
+  --kong-warning: #f59e0b;
+  --kong-error: #ef4444;
+  --kong-info: #3b82f6;
+  --kong-dark: #1a1a1a;
+  --kong-light: #ffffff;
+
+  /* Background Gradients */
+  --kong-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --kong-bg-gradient-alt: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --kong-card-gradient: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
+  --kong-glass-bg: rgba(255, 255, 255, 0.12);
+  --kong-glass-border: rgba(255, 255, 255, 0.25);
+  --kong-overlay-bg: rgba(0, 0, 0, 0.4);
+
+  /* Shadows */
+  --kong-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --kong-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --kong-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --kong-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.18);
+  --kong-shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+
+  /* Typography */
+  --kong-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --kong-font-size-xs: 0.75rem;
+  --kong-font-size-sm: 0.875rem;
+  --kong-font-size-base: 1rem;
+  --kong-font-size-lg: 1.125rem;
+  --kong-font-size-xl: 1.25rem;
+  --kong-font-size-2xl: 1.5rem;
+  --kong-font-size-3xl: 1.875rem;
+  --kong-font-size-4xl: 2.25rem;
+
+  /* Spacing */
+  --kong-space-1: 0.25rem;
+  --kong-space-2: 0.5rem;
+  --kong-space-3: 0.75rem;
+  --kong-space-4: 1rem;
+  --kong-space-5: 1.25rem;
+  --kong-space-6: 1.5rem;
+  --kong-space-8: 2rem;
+  --kong-space-10: 2.5rem;
+  --kong-space-12: 3rem;
+  --kong-space-16: 4rem;
+
+  /* Border Radius */
+  --kong-radius-sm: 0.375rem;
+  --kong-radius: 0.5rem;
+  --kong-radius-md: 0.75rem;
+  --kong-radius-lg: 1rem;
+  --kong-radius-xl: 1.25rem;
+  --kong-radius-2xl: 1.5rem;
+  --kong-radius-3xl: 2rem;
+
+  /* Transitions */
+  --kong-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --kong-transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --kong-transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--kong-font-family);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--kong-bg-gradient);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--kong-font-size-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Vaadin Theme Overrides */
+:host {
+  --lumo-primary-color: var(--kong-primary);
+  --lumo-primary-color-50pct: rgba(102, 126, 234, 0.5);
+  --lumo-primary-color-10pct: rgba(102, 126, 234, 0.1);
+  --lumo-primary-text-color: var(--kong-primary);
+  --lumo-secondary-text-color: rgba(255, 255, 255, 0.7);
+  --lumo-tertiary-text-color: rgba(255, 255, 255, 0.6);
+  --lumo-disabled-text-color: rgba(255, 255, 255, 0.4);
+  --lumo-primary-contrast-color: var(--kong-light);
+  --lumo-error-color: var(--kong-error);
+  --lumo-error-color-50pct: rgba(239, 68, 68, 0.5);
+  --lumo-error-color-10pct: rgba(239, 68, 68, 0.1);
+  --lumo-success-color: var(--kong-success);
+  --lumo-success-color-50pct: rgba(34, 197, 94, 0.5);
+  --lumo-success-color-10pct: rgba(34, 197, 94, 0.1);
+  --lumo-warning-color: var(--kong-warning);
+  --lumo-warning-color-50pct: rgba(245, 158, 11, 0.5);
+  --lumo-warning-color-10pct: rgba(245, 158, 11, 0.1);
+
+  --lumo-base-color: rgba(255, 255, 255, 0.05);
+  --lumo-body-text-color: rgba(255, 255, 255, 0.9);
+  --lumo-header-text-color: var(--kong-light);
+  --lumo-secondary-text-color: rgba(255, 255, 255, 0.7);
+  --lumo-tertiary-text-color: rgba(255, 255, 255, 0.6);
+  --lumo-disabled-text-color: rgba(255, 255, 255, 0.4);
+  --lumo-primary-text-color: var(--kong-primary);
+  --lumo-error-text-color: var(--kong-error);
+  --lumo-success-text-color: var(--kong-success);
+
+  --lumo-border-radius-s: var(--kong-radius-sm);
+  --lumo-border-radius-m: var(--kong-radius);
+  --lumo-border-radius-l: var(--kong-radius-lg);
+
+  --lumo-space-xs: var(--kong-space-1);
+  --lumo-space-s: var(--kong-space-2);
+  --lumo-space-m: var(--kong-space-4);
+  --lumo-space-l: var(--kong-space-6);
+  --lumo-space-xl: var(--kong-space-8);
+
+  --lumo-box-shadow-s: var(--kong-shadow-sm);
+  --lumo-box-shadow-m: var(--kong-shadow);
+  --lumo-box-shadow-l: var(--kong-shadow-lg);
+  --lumo-box-shadow-xl: var(--kong-shadow-xl);
+}
+
+/* Kong-Inspired Components */
+
+/* Dashboard Styles */
+.kong-dashboard {
+  background: var(--kong-bg-gradient);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.kong-dashboard::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Header Styles */
+.kong-header {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--kong-glass-border);
+  padding: var(--kong-space-6) var(--kong-space-8);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--kong-shadow);
+}
+
+.kong-header h2 {
+  color: var(--kong-light);
+  font-size: var(--kong-font-size-3xl);
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, var(--kong-light) 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.kong-header .realtime-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: var(--kong-success);
+  border-radius: 50%;
+  animation: kong-pulse 2s infinite;
+  margin-right: var(--kong-space-3);
+  box-shadow: 0 0 10px var(--kong-success);
+}
+
+@keyframes kong-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Stats Cards */
+.kong-stats-card {
+  background: var(--kong-card-gradient);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-xl);
+  padding: var(--kong-space-8);
+  position: relative;
+  overflow: hidden;
+  transition: var(--kong-transition);
+  box-shadow: var(--kong-shadow-lg);
+}
+
+.kong-stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--kong-primary), var(--kong-secondary));
+}
+
+.kong-stats-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--kong-shadow-xl);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.kong-stats-card .card-icon {
+  font-size: var(--kong-font-size-4xl);
+  color: var(--kong-primary);
+  margin-bottom: var(--kong-space-4);
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
+}
+
+.kong-stats-card .card-title {
+  font-size: var(--kong-font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--kong-space-2);
+}
+
+.kong-stats-card .card-value {
+  font-size: var(--kong-font-size-4xl);
+  font-weight: 700;
+  color: var(--kong-light);
+  margin: 0;
+  background: linear-gradient(135deg, var(--kong-light) 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Metrics Cards */
+.kong-metrics-card {
+  background: var(--kong-card-gradient);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-xl);
+  padding: var(--kong-space-6);
+  transition: var(--kong-transition);
+  box-shadow: var(--kong-shadow);
+}
+
+.kong-metrics-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--kong-shadow-lg);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.kong-metrics-card h3 {
+  color: var(--kong-light);
+  font-size: var(--kong-font-size-xl);
+  font-weight: 600;
+  margin: 0 0 var(--kong-space-4) 0;
+}
+
+/* Progress Bars */
+.kong-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--kong-radius-2xl);
+  overflow: hidden;
+  margin: var(--kong-space-3) 0;
+}
+
+.kong-progress-bar .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--kong-primary), var(--kong-secondary));
+  border-radius: var(--kong-radius-2xl);
+  transition: width 0.8s ease;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+/* Buttons */
+.kong-button {
+  background: linear-gradient(135deg, var(--kong-primary) 0%, var(--kong-secondary) 100%);
+  border: none;
+  border-radius: var(--kong-radius-lg);
+  color: var(--kong-light);
+  font-weight: 600;
+  font-size: var(--kong-font-size-sm);
+  padding: var(--kong-space-3) var(--kong-space-6);
+  cursor: pointer;
+  transition: var(--kong-transition);
+  box-shadow: var(--kong-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.kong-button:hover::before {
+  left: 100%;
+}
+
+.kong-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--kong-shadow-lg);
+}
+
+.kong-button.secondary {
+  background: var(--kong-glass-bg);
+  border: 1px solid var(--kong-glass-border);
+  color: var(--kong-light);
+}
+
+.kong-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.kong-button.danger {
+  background: linear-gradient(135deg, var(--kong-error) 0%, #dc2626 100%);
+}
+
+.kong-button.success {
+  background: linear-gradient(135deg, var(--kong-success) 0%, #16a34a 100%);
+}
+
+/* Form Elements */
+.kong-input {
+  background: var(--kong-glass-bg);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-lg);
+  color: var(--kong-light);
+  font-size: var(--kong-font-size-base);
+  padding: var(--kong-space-4);
+  transition: var(--kong-transition);
+  width: 100%;
+}
+
+.kong-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.kong-input:focus {
+  outline: none;
+  border-color: var(--kong-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.kong-select {
+  background: var(--kong-glass-bg);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-lg);
+  color: var(--kong-light);
+  padding: var(--kong-space-4);
+  cursor: pointer;
+  transition: var(--kong-transition);
+}
+
+.kong-select:focus {
+  outline: none;
+  border-color: var(--kong-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Badges */
+.kong-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--kong-space-2) var(--kong-space-4);
+  border-radius: var(--kong-radius-2xl);
+  font-size: var(--kong-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: var(--kong-transition);
+}
+
+.kong-badge.success {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--kong-success);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.kong-badge.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--kong-error);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.kong-badge.warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--kong-warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.kong-badge.info {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--kong-info);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.kong-badge.primary {
+  background: rgba(102, 126, 234, 0.2);
+  color: var(--kong-primary);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+/* Grid Styles */
+.kong-grid {
+  background: var(--kong-card-gradient);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--kong-shadow-lg);
+}
+
+.kong-grid vaadin-grid {
+  background: transparent;
+}
+
+.kong-grid vaadin-grid-cell {
+  padding: var(--kong-space-4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  transition: background-color 0.2s ease;
+}
+
+.kong-grid vaadin-grid-cell:last-child {
+  border-bottom: none;
+}
+
+.kong-grid vaadin-grid-cell:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.kong-grid vaadin-grid-header-cell {
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  color: var(--kong-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: var(--kong-space-5) var(--kong-space-4);
+}
+
+.kong-grid vaadin-grid-sorter {
+  color: var(--kong-light);
+}
+
+.kong-grid vaadin-grid-sorter:hover {
+  color: var(--kong-primary);
+}
+
+/* Navigation */
+.kong-nav {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--kong-glass-border);
+  padding: var(--kong-space-6);
+  min-height: 100vh;
+}
+
+/* Dashboard Tabs */
+.kong-dashboard-tabs {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border-radius: var(--kong-radius-lg);
+  padding: var(--kong-space-2);
+  margin: var(--kong-space-6) 0;
+  border: 1px solid var(--kong-glass-border);
+}
+
+.kong-dashboard-tabs vaadin-tab {
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: var(--kong-radius-md);
+  margin: 0 var(--kong-space-1);
+  transition: var(--kong-transition);
+  font-weight: 500;
+}
+
+.kong-dashboard-tabs vaadin-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--kong-light);
+}
+
+.kong-dashboard-tabs vaadin-tab[selected] {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+  color: var(--kong-light);
+  box-shadow: var(--kong-shadow);
+}
+
+/* Route Flow Visualization */
+.routes-flow-container {
+  position: relative;
+  overflow-x: auto;
+}
+
+.route-flow-node {
+  position: relative;
+  transition: var(--kong-transition);
+  cursor: pointer;
+}
+
+.route-flow-node:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--kong-shadow-lg);
+  border-color: var(--kong-primary);
+}
+
+.route-flow-node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  width: 20px;
+  height: 2px;
+  background: var(--kong-primary);
+  transform: translateY(-50%);
+}
+
+.route-flow-node:last-child::after {
+  display: none;
+}
+
+/* Enhanced Kong Theme Features */
+.kong-glass-effect {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-xl);
+  box-shadow: var(--kong-shadow-lg);
+}
+
+.kong-glow-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-glow-effect::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary), var(--kong-accent));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.kong-glow-effect:hover::before {
+  opacity: 0.3;
+}
+
+.kong-pulse-animation {
+  animation: kong-pulse-glow 2s infinite;
+}
+
+@keyframes kong-pulse-glow {
+  0% {
+    box-shadow: 0 0 5px var(--kong-primary);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--kong-primary), 0 0 30px var(--kong-secondary);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--kong-primary);
+  }
+}
+
+.kong-floating-animation {
+  animation: kong-float 3s ease-in-out infinite;
+}
+
+@keyframes kong-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.kong-gradient-text {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary), var(--kong-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.kong-shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: kong-shimmer 2s infinite;
+}
+
+@keyframes kong-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced Card Hover Effects */
+.kong-card-enhanced {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.kong-card-enhanced:hover {
+  transform: translateY(-12px) rotateX(5deg) rotateY(5deg);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 20px rgba(102, 126, 234, 0.2),
+    0 0 40px rgba(118, 75, 162, 0.1);
+}
+
+/* Kong-inspired Loading States */
+.kong-loading-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 75%);
+  background-size: 200% 100%;
+  animation: kong-loading-skeleton 1.5s infinite;
+}
+
+@keyframes kong-loading-skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Kong-inspired Notification Enhancements */
+.kong-notification-enhanced {
+  border-left: 4px solid;
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-notification-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--kong-primary), var(--kong-secondary));
+  animation: kong-notification-slide 0.3s ease-out;
+}
+
+@keyframes kong-notification-slide {
+  from {
+    transform: translateX(-4px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Enhanced Button Effects */
+.kong-button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-button-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.kong-button-ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Kong-inspired Progress Indicators */
+.kong-progress-enhanced {
+  position: relative;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.kong-progress-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--kong-primary), var(--kong-secondary));
+  border-radius: 4px;
+  animation: kong-progress-flow 2s linear infinite;
+}
+
+@keyframes kong-progress-flow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive Kong Theme */
+@media (max-width: 1024px) {
+  .kong-glow-effect:hover::before {
+    opacity: 0.1;
+  }
+
+  .kong-card-enhanced:hover {
+    transform: translateY(-6px) rotateX(2deg) rotateY(2deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .kong-floating-animation {
+    animation-duration: 4s;
+  }
+
+  .kong-shimmer-effect::after {
+    animation-duration: 3s;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --kong-bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    --kong-glass-bg: rgba(255, 255, 255, 0.05);
+    --kong-glass-border: rgba(255, 255, 255, 0.1);
+    --kong-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --kong-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .kong-glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .kong-gradient-text {
+    background: none;
+    -webkit-text-fill-color: var(--kong-dark);
+    color: var(--kong-dark);
+  }
+}
+
+/* Dark Mode Support */
+[theme~="dark"] {
+  --kong-primary: #8b5cf6;
+  --kong-secondary: #a855f7;
+  --kong-accent: #c084fc;
+  --kong-success: #10b981;
+  --kong-warning: #f59e0b;
+  --kong-error: #ef4444;
+  --kong-info: #06b6d4;
+  --kong-dark: #0f0f0f;
+  --kong-light: #1a1a1a;
+
+  --kong-bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  --kong-bg-gradient-alt: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --kong-card-gradient: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.6) 100%);
+  --kong-glass-bg: rgba(26, 26, 26, 0.8);
+  --kong-glass-border: rgba(255, 255, 255, 0.1);
+  --kong-overlay-bg: rgba(0, 0, 0, 0.6);
+
+  --kong-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --kong-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --kong-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --kong-shadow-glow: 0 0 20px rgba(139, 92, 246, 0.4);
+}
+
+[theme~="dark"] .kong-dashboard {
+  background: var(--kong-bg-gradient);
+}
+
+[theme~="dark"] .kong-stats-card,
+[theme~="dark"] .kong-metrics-card,
+[theme~="dark"] .kong-grid {
+  background: var(--kong-card-gradient);
+  border-color: var(--kong-glass-border);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[theme~="dark"] .kong-stats-card .card-value,
+[theme~="dark"] .kong-stats-card .card-title,
+[theme~="dark"] .kong-metrics-card h3,
+[theme~="dark"] .kong-header h2 {
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-nav {
+  background: var(--kong-glass-bg);
+  border-right-color: var(--kong-glass-border);
+}
+
+[theme~="dark"] .kong-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[theme~="dark"] .kong-nav-item.active {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+}
+
+[theme~="dark"] .kong-button.secondary {
+  background: var(--kong-glass-bg);
+  border-color: var(--kong-glass-border);
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-input,
+[theme~="dark"] .kong-select {
+  background: var(--kong-glass-bg);
+  border-color: var(--kong-glass-border);
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+[theme~="dark"] .kong-grid vaadin-grid-cell {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[theme~="dark"] .kong-grid vaadin-grid-header-cell {
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-notification {
+  background: var(--kong-card-gradient);
+  border-color: var(--kong-glass-border);
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-dialog-overlay {
+  background: var(--kong-overlay-bg);
+}
+
+[theme~="dark"] .kong-dialog {
+  background: var(--kong-card-gradient);
+  border-color: var(--kong-glass-border);
+}
+
+/* Enhanced Kong Theme Features for Dark Mode */
+[theme~="dark"] .kong-glass-effect {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+}
+
+/* Simple Charts - Open Source Alternatives */
+.kong-simple-chart {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--kong-radius-lg);
+  padding: var(--kong-space-4);
+  display: flex;
+  align-items: end;
+  justify-content: space-around;
+  overflow: hidden;
+}
+
+.kong-simple-chart::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* Line Chart */
+.kong-line-chart {
+  align-items: end;
+}
+
+.kong-line-chart .kong-chart-bar {
+  width: 6px;
+  background: linear-gradient(180deg, var(--kong-primary), var(--kong-secondary));
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  animation: kong-chart-grow 1.5s ease-out forwards;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.kong-line-chart .kong-chart-bar::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--kong-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--kong-primary);
+}
+
+/* Area Chart */
+.kong-area-chart .kong-chart-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 20%;
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+  opacity: 0.7;
+  animation: kong-area-fill 2s ease-out forwards;
+}
+
+/* Bar Chart */
+.kong-bar-chart .kong-chart-bar {
+  width: 30px;
+  background: linear-gradient(180deg, var(--kong-primary), var(--kong-secondary));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  animation: kong-chart-grow 1.5s ease-out forwards;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  margin: 0 2px;
+}
+
+.kong-bar-chart .kong-chart-label {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--kong-font-size-xs);
+  color: var(--kong-light);
+  white-space: nowrap;
+}
+
+/* Column Chart */
+.kong-column-chart .kong-chart-column {
+  width: 40px;
+  background: linear-gradient(180deg, var(--kong-primary), var(--kong-secondary));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  animation: kong-chart-grow 1.5s ease-out forwards;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  margin: 0 4px;
+}
+
+.kong-column-chart .kong-chart-label {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--kong-font-size-xs);
+  color: var(--kong-light);
+  white-space: nowrap;
+}
+
+/* Pie Chart */
+.kong-pie-chart {
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.kong-pie-chart .kong-pie-segment {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  animation: kong-pie-rotate 2s ease-out forwards;
+  opacity: 0;
+}
+
+.kong-pie-chart .kong-pie-segment:nth-child(1) { animation-delay: 0.1s; }
+.kong-pie-chart .kong-pie-segment:nth-child(2) { animation-delay: 0.2s; }
+.kong-pie-chart .kong-pie-segment:nth-child(3) { animation-delay: 0.3s; }
+.kong-pie-chart .kong-pie-segment:nth-child(4) { animation-delay: 0.4s; }
+.kong-pie-chart .kong-pie-segment:nth-child(5) { animation-delay: 0.5s; }
+
+/* Scatter Chart */
+.kong-scatter-chart {
+  position: relative;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.kong-scatter-chart .kong-scatter-point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--kong-primary);
+  border-radius: 50%;
+  animation: kong-scatter-appear 1.5s ease-out forwards;
+  opacity: 0;
+  box-shadow: 0 0 6px var(--kong-primary);
+}
+
+/* Chart Animations */
+@keyframes kong-chart-grow {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes kong-area-fill {
+  0% {
+    clip-path: polygon(0% 100%, 0% 100%, 0% 100%);
+    opacity: 0;
+  }
+  100% {
+    clip-path: polygon(0% 100%, 8.33% 80%, 16.66% 85%, 25% 70%, 33.33% 75%, 41.66% 60%, 50% 65%, 58.33% 55%, 66.66% 70%, 75% 50%, 83.33% 60%, 91.66% 45%, 100% 55%);
+    opacity: 0.7;
+  }
+}
+
+@keyframes kong-pie-rotate {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(-180deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes kong-scatter-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Dark Mode Chart Support */
+[theme~="dark"] .kong-simple-chart {
+  background: var(--kong-glass-bg);
+}
+
+[theme~="dark"] .kong-simple-chart::before {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+}
+
+[theme~="dark"] .kong-line-chart .kong-chart-bar,
+[theme~="dark"] .kong-bar-chart .kong-chart-bar,
+[theme~="dark"] .kong-column-chart .kong-chart-column {
+  background: linear-gradient(180deg, var(--kong-primary), var(--kong-secondary));
+}
+
+[theme~="dark"] .kong-area-chart .kong-chart-area {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+}
+
+[theme~="dark"] .kong-scatter-chart .kong-scatter-point {
+  background: var(--kong-primary);
+  box-shadow: 0 0 6px var(--kong-primary);
+}
+
+[theme~="dark"] .kong-chart-label {
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-glow-effect:hover::before {
+  background: linear-gradient(45deg, var(--kong-primary), var(--kong-secondary));
+}
+
+[theme~="dark"] .kong-gradient-text {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary), var(--kong-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[theme~="dark"] .kong-shimmer-effect::after {
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+}
+
+[theme~="dark"] .kong-progress-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[theme~="dark"] .kong-progress-bar .progress-fill {
+  background: linear-gradient(90deg, var(--kong-primary), var(--kong-secondary));
+}
+
+/* Language and Theme Selector Styling */
+.kong-theme-selector {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-lg);
+  padding: var(--kong-space-2);
+  color: var(--kong-light);
+  cursor: pointer;
+  transition: var(--kong-transition);
+}
+
+.kong-theme-selector:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--kong-primary);
+}
+
+[theme~="dark"] .kong-theme-selector {
+  background: var(--kong-glass-bg);
+  color: var(--kong-light);
+}
+
+[theme~="dark"] .kong-theme-selector:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+/* Improved Responsive Design */
+@media (max-width: 1024px) {
+  [theme~="dark"] .kong-dashboard {
+    background: var(--kong-bg-gradient);
+  }
+
+  [theme~="dark"] .kong-nav {
+    background: var(--kong-glass-bg);
+  }
+}
+
+@media (max-width: 768px) {
+  [theme~="dark"] .kong-header {
+    background: var(--kong-glass-bg);
+  }
+
+  [theme~="dark"] .kong-stats-card,
+  [theme~="dark"] .kong-metrics-card {
+    background: var(--kong-card-gradient);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .kong-pulse-animation,
+  .kong-floating-animation,
+  .kong-shimmer-effect::after,
+  .kong-loading-skeleton,
+  .kong-progress-enhanced::after {
+    animation: none;
+  }
+
+  .kong-card-enhanced,
+  .kong-glow-effect,
+  .kong-button-ripple {
+    transition: none;
+  }
+}
+
+.kong-nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--kong-space-4);
+  margin-bottom: var(--kong-space-2);
+  border-radius: var(--kong-radius-lg);
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: var(--kong-transition);
+  cursor: pointer;
+}
+
+.kong-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--kong-light);
+  transform: translateX(4px);
+}
+
+.kong-nav-item.active {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+  color: var(--kong-light);
+  box-shadow: var(--kong-shadow);
+}
+
+.kong-nav-item vaadin-icon {
+  margin-right: var(--kong-space-3);
+  font-size: var(--kong-font-size-lg);
+}
+
+/* Dialog/Modal */
+.kong-dialog-overlay {
+  background: var(--kong-overlay-bg);
+  backdrop-filter: blur(4px);
+}
+
+.kong-dialog {
+  background: var(--kong-card-gradient);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-2xl);
+  box-shadow: var(--kong-shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.kong-dialog .dialog-header {
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--kong-space-6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.kong-dialog .dialog-content {
+  padding: var(--kong-space-6);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.kong-dialog .dialog-footer {
+  background: rgba(255, 255, 255, 0.05);
+  padding: var(--kong-space-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--kong-space-3);
+}
+
+/* Notification */
+.kong-notification {
+  background: var(--kong-card-gradient);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--kong-glass-border);
+  border-radius: var(--kong-radius-lg);
+  box-shadow: var(--kong-shadow-lg);
+  color: var(--kong-light);
+  padding: var(--kong-space-4);
+  margin-bottom: var(--kong-space-3);
+}
+
+.kong-notification.success {
+  border-left: 4px solid var(--kong-success);
+}
+
+.kong-notification.error {
+  border-left: 4px solid var(--kong-error);
+}
+
+.kong-notification.warning {
+  border-left: 4px solid var(--kong-warning);
+}
+
+.kong-notification.info {
+  border-left: 4px solid var(--kong-info);
+}
+
+/* Tabs */
+.kong-tabs {
+  background: var(--kong-glass-bg);
+  backdrop-filter: blur(20px);
+  border-radius: var(--kong-radius-lg);
+  padding: var(--kong-space-2);
+  margin-bottom: var(--kong-space-6);
+}
+
+.kong-tab {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: var(--kong-space-3) var(--kong-space-6);
+  border-radius: var(--kong-radius-md);
+  cursor: pointer;
+  transition: var(--kong-transition);
+  font-weight: 500;
+}
+
+.kong-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--kong-light);
+}
+
+.kong-tab.active {
+  background: linear-gradient(135deg, var(--kong-primary), var(--kong-secondary));
+  color: var(--kong-light);
+  box-shadow: var(--kong-shadow);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .kong-stats-card {
+    margin-bottom: var(--kong-space-6);
+  }
+
+  .kong-nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 300px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .kong-nav.open {
+    left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .kong-header {
+    padding: var(--kong-space-4);
+  }
+
+  .kong-header h2 {
+    font-size: var(--kong-font-size-2xl);
+  }
+
+  .kong-stats-card {
+    padding: var(--kong-space-6);
+  }
+
+  .kong-stats-card .card-value {
+    font-size: var(--kong-font-size-3xl);
+  }
+
+  .kong-dialog {
+    max-width: 95vw;
+    margin: var(--kong-space-4);
+  }
+}
+
+/* Animations */
+.kong-fade-in {
+  animation: kong-fade-in 0.6s ease-out;
+}
+
+@keyframes kong-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kong-slide-up {
+  animation: kong-slide-up 0.4s ease-out;
+}
+
+@keyframes kong-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kong-scale-in {
+  animation: kong-scale-in 0.3s ease-out;
+}
+
+@keyframes kong-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Loading States */
+.kong-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.kong-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: kong-loading 1.5s infinite;
+}
+
+@keyframes kong-loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --kong-glass-bg: rgba(255, 255, 255, 0.9);
+    --kong-glass-border: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Focus styles for accessibility */
+.kong-button:focus-visible,
+.kong-input:focus-visible,
+.kong-select:focus-visible {
+  outline: 2px solid var(--kong-primary);
+  outline-offset: 2px;
+}
+
+/* Import Vaadin components CSS */
+@import '@vaadin/vaadin-lumo-styles/color.js';
+@import '@vaadin/vaadin-lumo-styles/typography.js';
+@import '@vaadin/vaadin-lumo-styles/sizing.js';
+@import '@vaadin/vaadin-lumo-styles/spacing.js';
+@import '@vaadin/vaadin-lumo-styles/style.js';
+@import '@vaadin/vaadin-lumo-styles/icons.js';
+
+/* Kong-inspired Dashboard Styles */
+.kong-dashboard {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.kong-stats-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.kong-stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.kong-metrics-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.kong-metrics-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.kong-card-icon {
+    color: rgba(255,255,255,0.9);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Progress bar styling for Kong theme */
+vaadin-progress-bar {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+vaadin-progress-bar::part(bar) {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+/* Enhanced grid styling */
+.routes-grid, .plugins-grid, .backends-grid {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+/* Kong-inspired button styling */
+vaadin-button[kong-primary] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+vaadin-button[kong-primary]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Kong-inspired navigation */
+vaadin-side-nav {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+vaadin-side-nav-item {
+    border-radius: 8px;
+    margin: 4px 8px;
+    transition: all 0.2s ease;
+}
+
+vaadin-side-nav-item:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(4px);
+}
+
+/* Kong-inspired header */
+vaadin-app-layout vaadin-drawer-toggle {
+    color: rgba(255,255,255,0.9);
+}
+
+/* Real-time indicator */
+.realtime-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #28a745;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    margin-right: 8px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+/* Kong-inspired notification system */
+.kong-notification {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Enhanced form styling */
+.kong-form {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+/* Kong-inspired dialog */
+vaadin-dialog-overlay[kong-theme] {
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+}
+
+vaadin-dialog[kong-theme] .dialog-content {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}

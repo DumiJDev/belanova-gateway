@@ -3,9 +3,11 @@ package io.github.dumidev.belanova.gateway.gateway.service.impl;
 
 import io.github.dumijdev.belanova.gateway.common.model.Backend;
 import io.github.dumidev.belanova.gateway.gateway.service.CacheService;
+import io.github.dumidev.belanova.gateway.gateway.config.IgniteCondition;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import javax.cache.Cache;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Conditional(IgniteCondition.class)
 public class IgniteCacheService implements CacheService {
 
     private final Ignite ignite;

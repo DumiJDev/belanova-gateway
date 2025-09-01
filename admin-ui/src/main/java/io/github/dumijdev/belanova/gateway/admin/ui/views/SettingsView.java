@@ -35,7 +35,6 @@ import java.util.List;
 
 @Route(value = "settings", layout = MainLayout.class)
 @PageTitle("Settings")
-@CssImport("./styles/settings.css")
 public class SettingsView extends VerticalLayout {
 
   private final TranslationService translationService;

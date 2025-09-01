@@ -1,8 +1,12 @@
 package io.github.dumijdev.belanova.gateway.admin.ui.layouts;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
@@ -17,28 +21,70 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import io.github.dumijdev.belanova.gateway.admin.ui.services.ThemeService;
+import io.github.dumijdev.belanova.gateway.admin.ui.services.TranslationService;
 import io.github.dumijdev.belanova.gateway.admin.ui.views.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MainLayout extends AppLayout {
 
   private H2 viewTitle;
+  private final ThemeService themeService;
+  private final TranslationService translationService;
 
-  public MainLayout() {
+  @Autowired
+  public MainLayout(ThemeService themeService, TranslationService translationService) {
+    this.themeService = themeService;
+    this.translationService = translationService;
+
     setPrimarySection(Section.DRAWER);
     addDrawerContent();
     addHeaderContent();
+    applyCurrentTheme();
   }
 
   private void addHeaderContent() {
     DrawerToggle toggle = new DrawerToggle();
-    toggle.setAriaLabel("Menu toggle");
+    toggle.setAriaLabel(translationService.getTranslation("menu.toggle"));
 
     viewTitle = new H2();
     viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-    HorizontalLayout header = new HorizontalLayout(toggle, viewTitle);
+    // Theme toggle button
+    Button themeToggle = new Button(new Icon(themeService.isDarkMode() ? VaadinIcon.SUN_O : VaadinIcon.MOON_O));
+    themeToggle.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+    themeToggle.setTooltipText(themeService.isDarkMode() ?
+        translationService.getTranslation("theme.light") :
+        translationService.getTranslation("theme.dark"));
+    themeToggle.addClickListener(e -> toggleTheme());
+
+    // Language selector button
+    Button languageButton = new Button(translationService.getLanguageDisplayName(translationService.getCurrentLanguage()));
+    languageButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+    languageButton.setTooltipText("Change Language");
+
+    // Language context menu
+    ContextMenu languageMenu = new ContextMenu(languageButton);
+    languageMenu.setOpenOnClick(true);
+
+    for (String lang : translationService.getSupportedLanguages()) {
+      languageMenu.addItem(translationService.getLanguageDisplayName(lang), e -> {
+        translationService.setLanguage(lang);
+        languageButton.setText(translationService.getLanguageDisplayName(lang));
+        refreshUI();
+      });
+    }
+
+    HorizontalLayout headerLeft = new HorizontalLayout(toggle, viewTitle);
+    headerLeft.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+    headerLeft.expand(viewTitle);
+
+    HorizontalLayout headerRight = new HorizontalLayout(themeToggle, languageButton);
+    headerRight.setSpacing(true);
+
+    HorizontalLayout header = new HorizontalLayout(headerLeft, headerRight);
     header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-    header.expand(viewTitle);
+    header.expand(headerLeft);
     header.setWidthFull();
     header.addClassNames(
         LumoUtility.Padding.Vertical.NONE,
@@ -48,15 +94,54 @@ public class MainLayout extends AppLayout {
     addToNavbar(header);
   }
 
+  private void applyCurrentTheme() {
+    String theme = themeService.getCurrentTheme();
+    UI.getCurrent().getElement().setAttribute("theme", theme);
+  }
+
+  private void toggleTheme() {
+    themeService.toggleTheme();
+    applyCurrentTheme();
+
+    // Update theme toggle icon
+    getChildren().filter(component -> component instanceof HorizontalLayout)
+        .findFirst()
+        .ifPresent(header -> {
+          header.getChildren().filter(component -> component instanceof HorizontalLayout)
+              .findFirst()
+              .ifPresent(headerRight -> {
+                headerRight.getChildren().filter(component -> component instanceof Button)
+                    .findFirst()
+                    .ifPresent(button -> {
+                      if (button instanceof Button) {
+                        Button themeButton = (Button) button;
+                        Icon icon = (Icon) themeButton.getIcon();
+                        if (icon != null) {
+                          icon.setIcon(themeService.isDarkMode() ? VaadinIcon.SUN_O : VaadinIcon.MOON_O);
+                          themeButton.setTooltipText(themeService.isDarkMode() ?
+                              translationService.getTranslation("theme.light") :
+                              translationService.getTranslation("theme.dark"));
+                        }
+                      }
+                    });
+              });
+        });
+  }
+
+  private void refreshUI() {
+    // Refresh the current view to apply new translations
+    UI.getCurrent().getPage().reload();
+  }
+
   private void addDrawerContent() {
-    H1 appName = new H1("Belanova Gateway");
+    H1 appName = new H1(translationService.getTranslation("app.name"));
     appName.addClassNames(
         LumoUtility.FontSize.LARGE,
         LumoUtility.Margin.NONE,
-        LumoUtility.TextColor.PRIMARY
+        LumoUtility.TextColor.PRIMARY_CONTRAST
     );
 
-    Span version = new Span("v1.0.0");
+    Span version = new Span(translationService.getTranslation("app.version"));
     version.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.SECONDARY);
 
     VerticalLayout brandLayout = new VerticalLayout(appName, version);
@@ -64,6 +149,7 @@ public class MainLayout extends AppLayout {
     brandLayout.setSpacing(false);
 
     Header header = new Header(brandLayout);
+    header.addClassName("kong-header");
 
     Scroller scroller = new Scroller(createNavigation());
 
@@ -72,24 +158,23 @@ public class MainLayout extends AppLayout {
 
   private SideNav createNavigation() {
     SideNav nav = new SideNav();
+    nav.addClassName("kong-nav");
 
-    nav.addItem(new SideNavItem("Dashboard", DashboardView.class, VaadinIcon.DASHBOARD.create()));
-    nav.addItem(new SideNavItem("Backends", BackendsView.class, VaadinIcon.SERVER.create()));
-    nav.addItem(new SideNavItem("Services", ServicesView.class, VaadinIcon.COGS.create()));
-    nav.addItem(new SideNavItem("Routes", RoutesView.class, VaadinIcon.ROAD.create()));
-    nav.addItem(new SideNavItem("Plugins", PluginsView.class, VaadinIcon.PLUG.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.dashboard"), DashboardView.class, VaadinIcon.DASHBOARD.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.backends"), BackendsView.class, VaadinIcon.SERVER.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.services"), ServicesView.class, VaadinIcon.COGS.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.routes"), RoutesView.class, VaadinIcon.ROAD.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.consumers"), ConsumersView.class, VaadinIcon.USERS.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.analytics"), AnalyticsView.class, VaadinIcon.CHART.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.alerts"), AlertsView.class, VaadinIcon.BELL.create()));
+    nav.addItem(new SideNavItem(translationService.getTranslation("nav.plugins"), PluginsView.class, VaadinIcon.PLUG.create()));
 
     // Monitoring section
-    SideNavItem monitoring = new SideNavItem("Monitoring", "", VaadinIcon.CHART.create());
-    monitoring.addItem(new SideNavItem("Health Checks", "", VaadinIcon.HEART.create()));
-    monitoring.addItem(new SideNavItem("Metrics", "", VaadinIcon.BAR_CHART.create()));
-    monitoring.addItem(new SideNavItem("Logs", "", VaadinIcon.FILE_TEXT.create()));
+    SideNavItem monitoring = new SideNavItem(translationService.getTranslation("nav.monitoring"), MonitoringView.class, VaadinIcon.CHART.create());
     nav.addItem(monitoring);
 
     // Settings section
-    SideNavItem settings = new SideNavItem("Settings", SettingsView.class, VaadinIcon.COG.create());
-    settings.addItem(new SideNavItem("Configuration", "", VaadinIcon.TOOLS.create()));
-    settings.addItem(new SideNavItem("Cache", "", VaadinIcon.PACKAGE.create()));
+    SideNavItem settings = new SideNavItem(translationService.getTranslation("nav.settings"), SettingsView.class, VaadinIcon.COG.create());
     nav.addItem(settings);
 
     return nav;

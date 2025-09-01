@@ -7,11 +7,13 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Conditional;
 import org.apache.ignite.IgniteException;
 
 import java.util.Collections;
 
 @Configuration
+@Conditional(IgniteCondition.class)
 public class IgniteConfig {
     
     @Bean

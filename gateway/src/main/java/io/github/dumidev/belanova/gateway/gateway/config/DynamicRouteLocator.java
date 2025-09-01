@@ -29,20 +29,33 @@ public class DynamicRouteLocator {
 
   @Bean
   public RouterFunction<ServerResponse> dynamicRoutes() {
-    return cacheService.getBackends()
-        .stream()
+    log.info("Building dynamic routes...");
+    var backends = cacheService.getBackends();
+    log.info("Found {} backends", backends.size());
+
+    return backends.stream()
         .filter(Backend::isEnabled)
-        .flatMap(backend -> backend.getServices().stream())
-        .filter(Service::isEnabled)
-        .map(service -> buildRoute(service.getBackend(), service))
+        .peek(backend -> log.info("Processing backend: {}", backend.getName()))
+        .filter(backend -> backend.getServices() != null && !backend.getServices().isEmpty())
+        .flatMap(backend -> backend.getServices().stream()
+            .filter(Service::isEnabled)
+            .peek(service -> log.info("Processing service: {}", service.getName()))
+            .map(service -> buildRoute(backend, service))
+            .filter(java.util.Objects::nonNull))
         .reduce(RouterFunction::and)
         .orElse(null);
   }
 
   private RouterFunction<ServerResponse> buildRoute(Backend backend, Service service) {
-    String uri = backend.isUseServiceDiscovery()
-        ? "lb://" + backend.getServiceId()
-        : backend.getBaseUrl();
+    String uri;
+    if (backend.isUseServiceDiscovery() && backend.getServiceId() != null) {
+      uri = "lb://" + backend.getServiceId();
+    } else if (backend.getBaseUrl() != null) {
+      uri = backend.getBaseUrl();
+    } else {
+      log.error("No valid URI found for backend: {}", backend.getName());
+      return null;
+    }
 
     RequestPredicate predicate = path(service.getPath());
     if (service.getMethods() != null && !service.getMethods().isEmpty()) {

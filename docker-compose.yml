@@ -1,0 +1,237 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: belanova-postgres
+    environment:
+      POSTGRES_DB: belanova_gateway
+      POSTGRES_USER: belanova
+      POSTGRES_PASSWORD: belanova123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U belanova -d belanova_gateway"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: belanova-redis
+    command: redis-server --appendonly yes --requirepass belanova123
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Apache Ignite for distributed caching
+  ignite:
+    image: apacheignite/ignite:2.16.0
+    container_name: belanova-ignite
+    environment:
+      IGNITE_QUIET: "false"
+      JVM_OPTS: "-Xms512m -Xmx1g"
+      OPTION_LIBS: "ignite-kubernetes,ignite-rest-http"
+    volumes:
+      - ignite_data:/opt/ignite/work
+      - ./docker/ignite/default-config.xml:/opt/ignite/config/default-config.xml
+    ports:
+      - "10800:10800"
+      - "11211:11211"
+      - "47100:47100"
+      - "47500:47500"
+      - "49112:49112"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  # Belanova Gateway Application
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/gateway/Dockerfile
+    container_name: belanova-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/belanova_gateway
+      - SPRING_DATASOURCE_USERNAME=belanova
+      - SPRING_DATASOURCE_PASSWORD=belanova123
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PASSWORD=belanova123
+      - SPRING_REDIS_PORT=6379
+      # - IGNITE_CLIENT_MODE=true
+      # - IGNITE_ADDRESSES=ignite:10800
+      - JWT_SECRET=${JWT_SECRET:-default-jwt-secret-key-for-belanova-gateway}
+      - JWT_ISSUER=${JWT_ISSUER:-belanova-gateway}
+      - JWT_AUDIENCE=${JWT_AUDIENCE:-belanova-api}
+      - GATEWAY_RATE_LIMIT_MAX_REQUESTS=${GATEWAY_RATE_LIMIT_MAX_REQUESTS:-100}
+      - GATEWAY_RATE_LIMIT_WINDOW_SIZE_MS=${GATEWAY_RATE_LIMIT_WINDOW_SIZE_MS:-60000}
+      - LOGGING_LEVEL_COM_BELANOVA_GATEWAY=${LOGGING_LEVEL_COM_BELANOVA_GATEWAY:-INFO}
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus,refresh
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+      - JAVA_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom --add-opens java.base/java.nio=ALL-UNNAMED
+    ports:
+      - "8080:8080"
+    networks:
+      - belanova-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+
+  # Admin UI (Vaadin Flow)
+  admin-ui:
+    build:
+      context: .
+      dockerfile: docker/admin-ui/Dockerfile
+    container_name: belanova-admin-ui
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/belanova_gateway
+      - SPRING_DATASOURCE_USERNAME=belanova
+      - SPRING_DATASOURCE_PASSWORD=belanova123
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PASSWORD=belanova123
+      - SPRING_REDIS_PORT=6379
+      - GATEWAY_BASE_URL=http://gateway:8080
+      - LOGGING_LEVEL_IO_GITHUB_DUMIJDEV_BELANOVA_GATEWAY=${LOGGING_LEVEL_IO_GITHUB_DUMIJDEV_BELANOVA_GATEWAY:-INFO}
+    ports:
+      - "8081:8081"
+    networks:
+      - belanova-network
+    depends_on:
+      - gateway
+      - postgres
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - ./logs:/app/logs
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: belanova-prometheus
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    depends_on:
+      - gateway
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: belanova-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=belanova123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  # Nginx reverse proxy (optional, for production)
+  nginx:
+    image: nginx:alpine
+    container_name: belanova-nginx
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - belanova-network
+    depends_on:
+      - gateway
+      - admin-ui
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Sample backend service for testing
+  sample-backend:
+    image: nginx:alpine
+    container_name: belanova-sample-backend
+    volumes:
+      - ./docker/sample-backend:/usr/share/nginx/html
+    ports:
+      - "8082:80"
+    networks:
+      - belanova-network
+    restart: unless-stopped
+    profiles:
+      - development
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ignite_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  belanova-network:
+    driver: bridge

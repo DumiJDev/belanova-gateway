@@ -7,3 +7,6 @@ spring:
 
 vaadin:
   launch-browser: true
+
+server:
+  port: 7070

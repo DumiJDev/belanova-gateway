@@ -1,33 +1,39 @@
 package io.github.dumijdev.belanova.gateway.common.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 import java.util.List;
 import java.util.Map;
 
-@Embeddable
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class HealthCheckConfig {
-  private String healthPath;
-  private int intervalSeconds;
-  private int timeoutSeconds;
-  private int healthyThreshold;
-  private int unhealthyThreshold;
+    private String healthPath;
+    private int timeoutMs;
+    private int intervalMs;
+    private List<Integer> expectedStatusCodes;
+    private Map<String, String> expectedHeaders;
+    private boolean enabled;
 
-  @ElementCollection
-  @CollectionTable(name = "healthcheck_expected_headers", joinColumns = @JoinColumn(name = "backend_id"))
-  @MapKeyColumn(name = "header_key")
-  @Column(name = "header_value")
-  private Map<String, String> expectedHeaders;
+    public HealthCheckConfig() {
+        this.healthPath = "/health";
+        this.timeoutMs = 5000;
+        this.intervalMs = 30000;
+        this.expectedStatusCodes = List.of(200, 201, 202, 203, 204);
+        this.expectedHeaders = Map.of();
+        this.enabled = true;
+    }
 
-  @ElementCollection
-  @CollectionTable(name = "healthcheck_expected_status_codes", joinColumns = @JoinColumn(name = "backend_id"))
-  @Column(name = "status_code")
-  private List<Integer> expectedStatusCodes;
-
+    public HealthCheckConfig(String healthPath, int timeoutMs, int intervalMs,
+                           List<Integer> expectedStatusCodes, Map<String, String> expectedHeaders,
+                           boolean enabled) {
+        this.healthPath = healthPath != null ? healthPath : "/health";
+        this.timeoutMs = timeoutMs > 0 ? timeoutMs : 5000;
+        this.intervalMs = intervalMs > 0 ? intervalMs : 30000;
+        this.expectedStatusCodes = expectedStatusCodes != null ? expectedStatusCodes :
+                                 List.of(200, 201, 202, 203, 204);
+        this.expectedHeaders = expectedHeaders != null ? expectedHeaders : Map.of();
+        this.enabled = enabled;
+    }
 }
